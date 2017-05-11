@@ -106,7 +106,7 @@ function mp4(){
 		if(_box.type="mdat"){
 			//display the content
 
-
+			this.extractMdat(_box);
 		}
 
 	}
@@ -150,11 +150,20 @@ function mp4(){
 
 	}
 
-	this.extractMdat(_mdatBox){
+	this.extractMdat = function(_mdatBox){
 
 		//todo error handling
 
-		
+		var xmlstr=""
+
+		for (var i = 0; i < _mdatBox.size-8; i++) {
+	    	
+	    	xmlstr+=String.fromCharCode(this.buffer[i+8+_mdatBox.idx]);
+	    }
+
+	    //display the xml
+	    console.log(xmlstr);
+
 
 	}
 
