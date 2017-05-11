@@ -215,11 +215,28 @@ function box(buf,buf_idx){
 //xmlstring: input XML string
 function parseXMLandDisplayImage(xmlstring){
 
+	//parse XML
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(xmlstring,"text/xml");
 
-	//document.getElementById("xmldisplay").innerHTML =
-	//console.log(xmlDoc.getElementsByTagName("smpte:image"));
+	//get the image elements
+	var images = xmlDoc.getElementsByTagName("image");
+
+
+	//insert the image to the DOM
+	var resultImageDiv=document.getElementById("xmldisplay");
+	var imageAttribute=""
+
+	for (var i=0;i<images.length;i++){
+
+		var b64imageString = images[i].childNodes[0].nodeValue;
+		imageAttribute = 'data:image/png;base64,'+b64imageString;
+		var imageElement = document.createElement('img');
+		imageElement.setAttribute('src', imageAttribute);
+
+		resultImageDiv.appendChild(imageElement);
+
+	}
 
 }
 
