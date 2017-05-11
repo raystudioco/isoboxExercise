@@ -10,6 +10,7 @@ function mp4(){
 	this.idx=0;
 	this.type="root";
 	this.buffer=null;
+
 	//load file
 	//url: URL of the file to load
 	//callback: callback function to parse the loaded buffer
@@ -21,7 +22,7 @@ function mp4(){
 		
 
 		xhr.onload = function (xEvnet) {
-			console.log("onload");
+			
 			var arrayBuffer =  xhr.response;
 
 			if(arrayBuffer){
@@ -84,7 +85,7 @@ function mp4(){
 		}
 
 		//display the content
-		if(_box.type="mdat"){
+		if(_box.type=="mdat"){
 		
 			this.extractMdat(_box);
 		}
@@ -161,6 +162,8 @@ function mp4(){
 	    //display the xml to console
 	    console.log(xmlstr);
 
+	    parseXMLandDisplayImage(xmlstr);
+
 
 	}
 
@@ -173,7 +176,6 @@ function box(buf,buf_idx){
 	this.type = "";
 	this.idx = buf_idx;
 	this.boxes=[];
-
 
 	this.parse=function(_buf){
 
@@ -215,7 +217,10 @@ function parseXMLandDisplayImage(xmlstring){
 
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(xmlstring,"text/xml");
-	
+
+	//document.getElementById("xmldisplay").innerHTML =
+	//console.log(xmlDoc.getElementsByTagName("smpte:image"));
+
 }
 
 
