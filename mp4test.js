@@ -30,6 +30,7 @@ function mp4(){
 				var byte = new Uint8Array(arrayBuffer);
 
 				//callbackk with the result
+				console.log("File - "+url+" - loaded");
 
 				callback(byte);
 
