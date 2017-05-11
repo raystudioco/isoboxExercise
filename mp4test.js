@@ -42,55 +42,35 @@ function mp4(){
 	this.parse = function (buffer) {
 
 		this.size= buffer.length;
-	 //   for (var i = 0; i < 10; i++) {
-	    	
-	  //  	console.log( '['+('0'+(buffer[i]& 0xFF).toString(16)).slice(-2)+']');
-
-	  //  }
+	 //   debug code for checking content binary
+	 //   for (var i = 0; i < 10; i++) {	    	
+	 //  	console.log( '['+('0'+(buffer[i]& 0xFF).toString(16)).slice(-2)+']');
+	 //  }
 	  	this.buffer=buffer;
 
+	  	//assume there is sub box with root structure
 	  	this.parseSubBox(this);
 
-	  	/*
-		while(this.hasNext){
 
-			parseBox(buffer,this.parse_idx);
-			var _box=new box(buffer,this.parse_idx);
-
-
-
-
-		}
-
-		if(this.rootbox==null){
-
-	  		this.rootbox = new box(buffer,0);
-
-
-
-		}
-
-
-
-
-		var rootBox = 
-		console.log('Size:'+rootBox.size);
-	 	console.log('Type:'+rootBox.type);
-	 	*/
 	}
 
 
-
+	// recursive structure for parsing boxes
+	// perform a deep priority search
+	// check both sub box, and other box in the same parent box.
+	// _parentBox: parentBox of the current box being parsed
+	// _box: current box going to be parsed.
 	this.parseBox = function(_parentBox, _box){
 
+		// check for sub box 
+		// deep priority search
 		if(this.hasSubBox(_box)){
 
 			this.parseSubBox(_box);
 
-			//v add SubBox to box structure
-
 		}
 
+		//check of other box in the samne parent box
 		if(this.hasNextBox(_parentBox, _box)){
 
 			var nextBox = new box(this.buffer, _box.idx+_box.size)
@@ -103,26 +83,32 @@ function mp4(){
 
 		}
 
+		//display the content
 		if(_box.type="mdat"){
-			//display the content
-
+		
 			this.extractMdat(_box);
 		}
 
 	}
 
-
+	// Parse sub box under the current box
+	// _box: box to be parsed for sub box
 	this.parseSubBox = function(_box){
 
 		//get sub box;
+
 		var offset=0;
 		if(_box.type!="root"){
+			//assume the data (sub box), start after 8 bytes
+			//4 byte size, 4 byte type
 			offset =8;
 		}	
 
 		var subBox = new box(this.buffer,_box.idx+offset);
 
+		//add sub box to the structure
 		_box.boxes.push(subBox);
+
 		//parse to see if there's next boxes
 		this.parseBox(_box, subBox);
 
@@ -130,10 +116,11 @@ function mp4(){
 
 	// check box type to see if there will be sub Box or not.
 	// Todo: other criteria to be considered?
+	// _box: the current box to be checked if there's sub box inside
 	this.hasSubBox = function(_box){
 		
-		if(_box.type=="moof" || _box.type=="traf"){ //todo: finish the logic
-
+		if(_box.type=="moof" || _box.type=="traf"){ 
+		//currently assume only these 2 type has sub box
 			return true;
 		} else {
 			return false;
@@ -141,8 +128,15 @@ function mp4(){
 
 	}
 
+
+	// check if there're other box in the same parent box
+	// the checking is using a length based logic
+	// The assumption is that if there's data/conten, it should be contained with box
+	// parentBox: parent box where current box is under
+	// currentBox: current box to be checked if there's next box.
 	this.hasNextBox = function(parentBox, currentBox){
 
+		//length based calculation, see if there's space for data/content (other box)
 		if(parentBox.size+parentBox.idx-currentBox.idx-currentBox.size>0){
 			return true;
 		} else 
@@ -150,10 +144,13 @@ function mp4(){
 
 	}
 
+	// extract and display the mdatbox content
+	//_mdatBox: mdat box having xml and img content
 	this.extractMdat = function(_mdatBox){
 
 		//todo error handling
 
+		//extract xml string from  buffer
 		var xmlstr=""
 
 		for (var i = 0; i < _mdatBox.size-8; i++) {
@@ -161,7 +158,7 @@ function mp4(){
 	    	xmlstr+=String.fromCharCode(this.buffer[i+8+_mdatBox.idx]);
 	    }
 
-	    //display the xml
+	    //display the xml to console
 	    console.log(xmlstr);
 
 
@@ -212,6 +209,14 @@ function box(buf,buf_idx){
 }
 
 
+//Parse XML and display Image in the string.
+//xmlstring: input XML string
+function parseXMLandDisplayImage(xmlstring){
+
+	parser = new DOMParser();
+	xmlDoc = parser.parseFromString(xmlstring,"text/xml");
+	
+}
 
 
 //Todos::
