@@ -217,13 +217,19 @@ function box(buf,buf_idx){
 function parseXMLandDisplayImage(xmlstring){
 
 	//parse XML
+	//console.log('parseXML');
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(xmlstring,"text/xml");
-
+	console.log(xmlDoc);
 	//get the image elements
-	var images = xmlDoc.getElementsByTagName("image");
+	var images = xmlDoc.getElementsByTagName("smpte:image");
+	
+	if(images.length==0){
+		//can't find image for some reason on chrome.
+		images = xmlDoc.getElementsByTagName("image");
 
-
+	}
+	//console.log(images);
 	//insert the image to the DOM
 	var resultImageDiv=document.getElementById("xmldisplay");
 	var imageAttribute="";
