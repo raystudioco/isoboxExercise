@@ -226,7 +226,7 @@ function parseXMLandDisplayImage(xmlstring){
 
 	//insert the image to the DOM
 	var resultImageDiv=document.getElementById("xmldisplay");
-	var imageAttribute=""
+	var imageAttribute="";
 
 	for (var i=0;i<images.length;i++){
 
