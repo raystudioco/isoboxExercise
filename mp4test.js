@@ -153,15 +153,36 @@ function mp4(){
 		//todo error handling
 
 		//extract xml string from  buffer
-		var xmlstr=""
+		var xmlstr="";
 
+		console.log("Content from MDAT : ");
+
+		//implentation for sending a chunk of text to console
+		var displayStrChunk="";
+		var charCount=0;
+		var charMax = 512;
+		var totalLength=0
 		for (var i = 0; i < _mdatBox.size-8; i++) {
-	    	
-	    	xmlstr+=String.fromCharCode(this.buffer[i+8+_mdatBox.idx]);
+	    	var currentChar =String.fromCharCode(this.buffer[i+8+_mdatBox.idx]);
+	    	xmlstr+= currentChar
+	    	displayStrChunk+=currentChar;
+	    	charCount++;
+	    	if(charCount+1>charMax || i+1==_mdatBox.size-8){
+	    		//console.log(displayStrChunk.length);
+	    		//totalLength+=displayStrChunk.length;
+
+	    		console.log(displayStrChunk);
+	    		charCount=0;
+	    		displayStrChunk="";
+	    	}
 	    }
 
-	    //display the xml to console
-	    console.log(xmlstr);
+	    //size verify
+		//console.log(xmlstr.length);
+		//console.log(totalLength);
+
+		//display content
+	    //console.log(xmlstr);
 
 	    parseXMLandDisplayImage(xmlstr);
 
@@ -220,7 +241,7 @@ function parseXMLandDisplayImage(xmlstring){
 	//console.log('parseXML');
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(xmlstring,"text/xml");
-	console.log(xmlDoc);
+	//console.log(xmlDoc);
 	//get the image elements
 	var images = xmlDoc.getElementsByTagName("smpte:image");
 	
@@ -248,11 +269,6 @@ function parseXMLandDisplayImage(xmlstring){
 }
 
 
-//Todos::
-//v build structure
-//display the result
-
-
 
 window.onload = function() {
 
@@ -262,7 +278,7 @@ window.onload = function() {
 
 			mp4obj.parse(buf);
 
-
+			//display the structure for verfication
 			console.log(mp4obj);
 		}
 	);
